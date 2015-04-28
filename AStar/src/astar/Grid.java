@@ -5,16 +5,31 @@
  */
 package astar;
 
+import java.util.Scanner;
+
 /**
  *
  * @author Edwin
  */
 public class Grid {
-    
-    static int[][] world = new int[10][15];
-    
+
+    static int[][] world;
+    //static Obstacle[] obstacles;
+    static int x, y, numObstacles;
+    static final int MAX_OBSTACLES = 5;
     public static int[][] makeW(){
         
+    	Scanner in = new Scanner(System.in);
+    	System.out.print("Please input x dimension: ");
+    	x = Integer.parseInt(in.nextLine());
+    	System.out.print("Please input y dimension: ");
+    	y = Integer.parseInt(in.nextLine());
+    	
+    	numObstacles = (int) (Math.random() * MAX_OBSTACLES);
+    	//Sobstacles = new Obstacle[numObstacles];
+    	
+    	world = new int[y][x];
+    	
         for(int j=0; j<world[0].length;j++){
             world[0][j]='#';
         }
@@ -79,7 +94,19 @@ public class Grid {
         return "";
     }
       
-    public static void setBlock(int x, int y){
-        world[x][y] = '#';
+    public static void setBlocks(){
+    	int xDim = x;
+    	int yDim = y;
+    	int randX = (int) (Math.random() * xDim);
+    	int randY = (int) (Math.random() * yDim);
+    	
+    	for(int x = 0; x < numObstacles; x++) {
+			while(world[randY][randX] == '#') {
+    			randX = (int) (Math.random() * xDim);
+        		randY = (int) (Math.random() * yDim);
+			}
+			world[randY][randX] = '#';
+    	}
+        
     }
 }

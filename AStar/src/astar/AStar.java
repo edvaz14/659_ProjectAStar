@@ -14,12 +14,16 @@ public class AStar {
     /**
      * @param args the command line arguments
      */
+	
+
     public static void main(String[] args) {
-        
+        int randX, randY;
+        Pair h, z;
         Grid.makeW();
-        Grid.setBlock(3, 2);
-        Grid.setBlock(4, 1);
-        Path path = new Path(2,1,8,10);
+        randX = (int) Math.random() * Grid.x;
+        randY = (int) Math.random() * Grid.y;
+        Grid.setBlocks();
+        Path path = new Path();
     }
     
 }

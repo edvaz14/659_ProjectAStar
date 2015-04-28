@@ -15,37 +15,49 @@ public class Path {
     
     static ArrayList<Pair> open = new ArrayList<Pair>();
     static ArrayList<Pair> closed = new ArrayList<Pair>();
+    int zX, zY, hX, hY;
     
-    Path(int sx, int sy, int tx, int ty){
+    Path(){
+    	int dX = (Grid.x - 1) + 1;
+    	int dY = (Grid.y - 1) + 1;
+    	
+        zX = (int) (Math.random() * dX) + 1;
+        zY = (int) (Math.random() * dY) + 1;
         
-        Pair spair = new Pair(sx,sy), tpair = new Pair(tx,ty), cpair = spair;
-        Grid.world[tpair.getX()][tpair.getY()]='T';
-        Grid.world[spair.getX()][spair.getY()]='S';
+        Pair zPair = new Pair(zX,zY);
+        
+        hX = (int) (Math.random() * dX) + 1;
+        hY = (int) (Math.random() * dY) + 1;
+        
+        Pair hPair = new Pair(hX,hY), cpair = zPair;
+        
+        Grid.world[hPair.getX()][hPair.getY()]='H';
+        Grid.world[zPair.getX()][zPair.getY()]='Z';
         Grid.printW();
-        open.add(spair);
+        open.add(zPair);
         
         while(!open.isEmpty()){
             cpair = findLF();
 
-            if(closed.contains(tpair)){
+            if(closed.contains(hPair)){
                 System.out.println("\n\n\nPATH FOUND");
                 
                 break;
             }
         
-            adjPairs(cpair, tpair);
+            adjPairs(cpair, hPair);
             System.out.println("\n");
             Grid.printW();
         }
         
-        Grid.world[tpair.getX()][tpair.getY()]='T';
-        Grid.world[spair.getX()][spair.getY()]='S';
+        Grid.world[hPair.getX()][hPair.getY()]='H';
+        Grid.world[zPair.getX()][zPair.getY()]='Z';
         
         if(open.isEmpty()){
             System.out.println("\nNO PATH FOUND");
         }else{
             Pair tar = cpair;
-            while(tar.getP() != spair){
+            while(tar.getP() != zPair){
                 tar=tar.getP();
                 Grid.world[tar.getX()][tar.getY()]='@';
             } 
