@@ -37,6 +37,32 @@ public class AStarTest {
 	@Test
 	public void sameLocation() {
 		
+		Grid.makeW();
+		
+		int dX = (Grid.x - 1) + 1;
+    	int dY = (Grid.y - 1) + 1;
+    	int zX, zY, hX, hY;
+    	
+        zX = (int) (Math.random() * dX) + 1;
+        zY = (int) (Math.random() * dY) + 1;
+        
+        Pair zPair = new Pair(zX,zY);
+        
+        hX = (int) (Math.random() * dX) + 1;
+        hY = (int) (Math.random() * dY) + 1;
+        
+        while(hX == zPair.getX() && hY == zPair.getY()) {
+        	 hX = (int) (Math.random() * dX) + 1;
+             hY = (int) (Math.random() * dY) + 1;
+             
+             System.out.println(hX + " " + hY);
+        }
+        
+        Pair hPair = new Pair(hX,hY), cpair = zPair;
+        
+        assertTrue(zPair.getX() != hPair.getX());
+        assertTrue(zPair.getY() != hPair.getY());
+
 	}
 
 }

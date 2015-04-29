@@ -29,6 +29,11 @@ public class Path {
         hX = (int) (Math.random() * dX) + 1;
         hY = (int) (Math.random() * dY) + 1;
         
+        while(hX == zPair.getX() && hY == zPair.getY()) {
+        	 hX = (int) (Math.random() * dX) + 1;
+             hY = (int) (Math.random() * dY) + 1;
+        }
+        
         Pair hPair = new Pair(hX,hY), cpair = zPair;
         
         Grid.world[hPair.getX()][hPair.getY()]='H';
