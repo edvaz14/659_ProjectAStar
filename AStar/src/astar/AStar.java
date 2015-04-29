@@ -20,8 +20,13 @@ public class AStar {
         int randX, randY;
         Pair h, z;
         Grid.makeW();
-        randX = (int) Math.random() * Grid.x;
-        randY = (int) Math.random() * Grid.y;
+        
+        int dX = ((Grid.x - 1) - 1) + 1;
+    	int dY = ((Grid.y - 1) - 1) + 1;
+    	
+        randX = (int) (Math.random() * dX) + 1;
+        randY = (int) (Math.random() * dY) + 1;
+        
         Grid.setBlocks();
         Path path = new Path();
     }

@@ -76,11 +76,11 @@ public class Grid {
             case '*':
                 type = "*";
                 break;
-            case 'T':
-                type = "T";
+            case 'H':
+                type = "H";
                 break;
-            case 'S':
-                type = "S";
+            case 'Z':
+                type = "Z";
                 break;
             default:
                 type = " ";
@@ -90,20 +90,22 @@ public class Grid {
     }
     
     public static String getW(int x, int y){
-        type(world[x][y]);
+        type(world[y][x]);
         return "";
     }
       
     public static void setBlocks(){
-    	int xDim = x;
-    	int yDim = y;
-    	int randX = (int) (Math.random() * xDim);
-    	int randY = (int) (Math.random() * yDim);
+    	
+    	int dX = ((Grid.x - 1) - 1) + 1;
+     	int dY = ((Grid.y - 1) - 1) + 1;
+    	
+    	int randX = (int) (Math.random() * dX) + 1;
+    	int randY = (int) (Math.random() * dY) + 1;
     	
     	for(int x = 0; x < numObstacles; x++) {
 			while(world[randY][randX] == '#') {
-    			randX = (int) (Math.random() * xDim);
-        		randY = (int) (Math.random() * yDim);
+				randX = (int) (Math.random() * dX) + 1;
+		    	randY = (int) (Math.random() * dY) + 1;
 			}
 			world[randY][randX] = '#';
     	}

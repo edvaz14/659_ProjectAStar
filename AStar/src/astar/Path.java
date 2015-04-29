@@ -15,48 +15,59 @@ public class Path {
     
     static ArrayList<Pair> open = new ArrayList<Pair>();
     static ArrayList<Pair> closed = new ArrayList<Pair>();
+    
+    static ArrayList<Pair> hopen = new ArrayList<Pair>();
+    static ArrayList<Pair> hclosed = new ArrayList<Pair>();
     int zX, zY, hX, hY;
     
     Path(){
-    	int dX = (Grid.x - 1) + 1;
-    	int dY = (Grid.y - 1) + 1;
+    	int dX = ((Grid.x - 1) - 1) + 1;
+    	int dY = ((Grid.y - 1) - 1) + 1;
     	
-        zX = (int) (Math.random() * dX) + 1;
-        zY = (int) (Math.random() * dY) + 1;
+        zX = ((int) (Math.random() * dX)) + 1;
+        zY = ((int) (Math.random() * dY)) + 1;
+        
+        while(Grid.world[zY][zX] == '#') {
+        	zX = ((int) (Math.random() * dX)) + 1;
+            zY = ((int) (Math.random() * dY)) + 1;
+        }
         
         Pair zPair = new Pair(zX,zY);
         
         hX = (int) (Math.random() * dX) + 1;
         hY = (int) (Math.random() * dY) + 1;
         
-        while(hX == zPair.getX() && hY == zPair.getY()) {
+        while((hX == zPair.getX() && hY == zPair.getY()) || (Grid.world[hY][hX] == '#')) {
         	 hX = (int) (Math.random() * dX) + 1;
              hY = (int) (Math.random() * dY) + 1;
         }
         
-        Pair hPair = new Pair(hX,hY), cpair = zPair;
+        Pair hPair = new Pair(hX,hY), cpair = zPair, rpair = hPair;
         
-        Grid.world[hPair.getX()][hPair.getY()]='H';
-        Grid.world[zPair.getX()][zPair.getY()]='Z';
+        //System.out.println(cpair.getX() + " c " + cpair.getY());
+        
+        Grid.world[hPair.getY()][hPair.getX()]='H';
+        Grid.world[zPair.getY()][zPair.getX()]='Z';
         Grid.printW();
         open.add(zPair);
+        hopen.add(hPair);
         
         while(!open.isEmpty()){
             cpair = findLF();
 
             if(closed.contains(hPair)){
-                System.out.println("\n\n\nPATH FOUND");
+                System.out.println("\nPATH FOUND");
                 
                 break;
             }
         
             adjPairs(cpair, hPair);
-            System.out.println("\n");
-            Grid.printW();
+            //System.out.println("\n");
+            //Grid.printW();
         }
         
-        Grid.world[hPair.getX()][hPair.getY()]='H';
-        Grid.world[zPair.getX()][zPair.getY()]='Z';
+        Grid.world[hPair.getY()][hPair.getX()]='H';
+        Grid.world[zPair.getY()][zPair.getX()]='Z';
         
         if(open.isEmpty()){
             System.out.println("\nNO PATH FOUND");
@@ -64,10 +75,15 @@ public class Path {
             Pair tar = cpair;
             while(tar.getP() != zPair){
                 tar=tar.getP();
-                Grid.world[tar.getX()][tar.getY()]='@';
+                Grid.world[tar.getY()][tar.getX()]='@';
             } 
         }
         Grid.printW();
+        
+        rpair = findHF();
+        
+        
+        
     }
     
     public Pair findLF(){
@@ -80,9 +96,28 @@ public class Path {
                 temp = open.get(i);
             }
         }
-        Grid.world[temp.getX()][temp.getY()]='*';
+        Grid.world[temp.getY()][temp.getX()]='*';
         closed.add(temp);
         open.remove(temp);
+        
+        //System.out.println(temp.getX() + " " + temp.getY());
+        return temp;
+    }
+    
+    public Pair findHF() {
+    	int f = hopen.get(0).getF();
+        Pair temp = hopen.get(0);
+        
+        for(int i=1; i<hopen.size(); i++){
+            if(f < hopen.get(i).getF()){
+                f = hopen.get(i).getF();
+                temp = hopen.get(i);
+            }
+        }
+        Grid.world[temp.getY()][temp.getX()]='^';
+        hclosed.add(temp);
+        hopen.remove(temp);
+        
         return temp;
     }
     
@@ -105,9 +140,16 @@ public class Path {
                         continue;
                 }
 
-                int px = x + cpair.getX(),py = y + cpair.getY();
+                int px = 0, py = 0;
+                if(x + cpair.getX() == Grid.x) 
+                	continue;
+                if(y + cpair.getY() == Grid.y) 
+                	continue;
+                
+                px = x + cpair.getX();
+                py = y + cpair.getY();
 
-                if(Grid.world[px][py]!='#'){
+                if(Grid.world[py][px]!='#'){
                     Pair npair = new Pair(px,py);
 
                     if((x != 0) && (y != 0)){
@@ -122,7 +164,7 @@ public class Path {
                         npair.setF(functions.fVal(npair.getG(), npair.getH()));
                         npair.setP(cpair);
                         open.add(npair);
-                        Grid.world[px][py]='|';
+                        Grid.world[py][px]='|';
                     }else{
                         if(npair.getG()>functions.gVal(cpair.getG(), cpair.getD())){
                             npair.setG(functions.gVal(cpair.getG(),cpair.getD()));
@@ -133,6 +175,42 @@ public class Path {
                 }
             }
         }
+    }
+    
+    public void findHVals(Pair rpair, Pair zpair) {
+    	for (int x=-1;x<2;x++) {
+            for (int y=-1;y<2;y++) {
+                if ((x == 0) && (y == 0)) {
+                        continue;
+                }
+                
+                int px = 0, py = 0;
+                if(x + rpair.getX() == Grid.x) 
+                	continue;
+                if(y + rpair.getY() == Grid.y) 
+                	continue;
+                
+                px = x + rpair.getX();
+                py = y + rpair.getY();
+                
+                if(Grid.world[py][px]!='#'){
+                    Pair npair = new Pair(px,py);
+
+                    if((x != 0) && (y != 0)){
+                        npair.setD(Boolean.TRUE);
+                    }
+                    if(hclosed.contains(npair)){
+                        continue;
+                    }
+                    if(!hopen.contains(npair)){
+                        npair.setH(functions.hVal(px, py, zpair.getX(), zpair.getY()));
+                        hopen.add(npair);
+                        Grid.world[py][px]='|';
+                    }
+                }
+            }
+    	}
+                
     }
     
 }
