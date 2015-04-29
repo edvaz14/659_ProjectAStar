@@ -46,44 +46,125 @@ public class Path {
         
         //System.out.println(cpair.getX() + " c " + cpair.getY());
         
-        Grid.world[hPair.getY()][hPair.getX()]='H';
-        Grid.world[zPair.getY()][zPair.getX()]='Z';
-        Grid.printW();
-        open.add(zPair);
-        hopen.add(hPair);
+        //Grid.world[hPair.getY()][hPair.getX()]='H';
+        //Grid.world[zPair.getY()][zPair.getX()]='Z';
+//        Grid.printW();
+        //open.add(zPair);
+        //hopen.add(hPair);
+        while(distance(zPair, hPair) != 1.0 && distance(zPair, hPair) != Math.sqrt(2)) {
+        	cpair = zPair;
+        	rpair = hPair;
+        	open.add(zPair);
+            hopen.add(hPair);
+            
+            Grid.world[hPair.getY()][hPair.getX()]='H';
+	        Grid.world[zPair.getY()][zPair.getX()]='Z';
+        	Grid.printW();
+        	System.out.println();
+	        while(!open.isEmpty()){
+	            cpair = findLF();
+	
+	            if(closed.contains(hPair)){
+	                //System.out.println("\nPATH FOUND");
+	                
+	                break;
+	            }
+	        
+	            adjPairs(cpair, hPair);
+	            //System.out.println("\n");
+	            //Grid.printW();
+	        }
+	        
+	        Grid.world[hPair.getY()][hPair.getX()]='H';
+	        Grid.world[zPair.getY()][zPair.getX()]='Z';
+	        
+	        if(open.isEmpty()){
+	            System.out.println("\nNO PATH FOUND");
+	        }else{
+	            Pair tar = cpair;
+	            while(tar.getP() != zPair){
+	                tar=tar.getP();
+	//                Grid.world[tar.getY()][tar.getX()]='@';
+	            } 
+//	            /Grid.world[tar.getY()][tar.getX()]='@';
+	            Grid.world[zPair.getY()][zPair.getX()] = '-';
+	            zPair = tar;
+	        }
+	        
+	        
+	        
+	        while(!hopen.isEmpty()) {
+	        	rpair = findHF();
+	        	if(hclosed.contains(zPair)) {
+	        		break;
+	        	}
+	        	findHVals(rpair, zPair);
+	        }
+	        
+	        Grid.world[hPair.getY()][hPair.getX()]='H';
+	        Grid.world[zPair.getY()][zPair.getX()]='Z';
+	        
+	        if(hopen.isEmpty()){
+	            System.out.println("\nHUMAN IS CAUGHT");
+	        }else{
+	            Pair tar = rpair;
+	            while(tar.getP() != hPair){
+	                tar=tar.getP();
+	//                Grid.world[tar.getY()][tar.getX()]='@';
+	            } 
+//	            /Grid.world[tar.getY()][tar.getX()]='@';
+	            Grid.world[hPair.getY()][hPair.getX()] = '+';
+	            hPair = tar;
+	        }
+	        
+	        Grid.world[hPair.getY()][hPair.getX()]='H';
+	        Grid.world[zPair.getY()][zPair.getX()]='Z';
+	        Grid.printW();
+	        
+	        //hPair = rpair;
+	        //zPair = cpair;
+	        
+	        open.clear();
+	        closed.clear();
+	        hopen.clear();
+	        hclosed.clear();
+	        resetWorld();
+	        
+	        System.out.println();
+	        
+	        //System.out.println(Grid.numObstacles + " d");
+	        for(int x = 0; x < Grid.numObstacles; x++) {
+	        	Pair p = Grid.obstacles[x];
+	        	Grid.world[p.getX()][p.getY()] = '#';
+	        }
+	        //Grid.printW();
+        }
         
-        while(!open.isEmpty()){
-            cpair = findLF();
 
-            if(closed.contains(hPair)){
-                System.out.println("\nPATH FOUND");
-                
-                break;
-            }
-        
-            adjPairs(cpair, hPair);
-            //System.out.println("\n");
-            //Grid.printW();
-        }
-        
-        Grid.world[hPair.getY()][hPair.getX()]='H';
-        Grid.world[zPair.getY()][zPair.getX()]='Z';
-        
-        if(open.isEmpty()){
-            System.out.println("\nNO PATH FOUND");
-        }else{
-            Pair tar = cpair;
-            while(tar.getP() != zPair){
-                tar=tar.getP();
-                Grid.world[tar.getY()][tar.getX()]='@';
-            } 
-        }
-        Grid.printW();
-        
-        rpair = findHF();
+        //Grid.world[hPair.getY()][hPair.getX()]='H';
+        //Grid.world[zPair.getY()][zPair.getX()]='Z';
+    	//Grid.printW();
+    	//System.out.println("\nsdfsdf");
         
         
         
+    }
+    
+    public double distance(Pair a, Pair b) {
+    	double distance;
+    	double xComp = Math.pow(b.getX() - a.getX(), 2);
+    	double yComp = Math.pow(b.getY() - a.getY(), 2);
+    	
+    	distance = Math.sqrt(xComp + yComp);
+    	//System.out.println(distance);
+    	return distance;
+    }
+    
+    public void resetWorld() {
+    	int x = Grid.x;
+    	int y = Grid.y;
+    	
+    	Grid.makeW(x , y);
     }
     
     public Pair findLF(){
@@ -114,10 +195,11 @@ public class Path {
                 temp = hopen.get(i);
             }
         }
-        Grid.world[temp.getY()][temp.getX()]='^';
+        //Grid.world[temp.getY()][temp.getX()]= '^';
         hclosed.add(temp);
         hopen.remove(temp);
-        
+        //resetWorld();
+       
         return temp;
     }
     
@@ -164,7 +246,7 @@ public class Path {
                         npair.setF(functions.fVal(npair.getG(), npair.getH()));
                         npair.setP(cpair);
                         open.add(npair);
-                        Grid.world[py][px]='|';
+                        //Grid.world[py][px]='|';
                     }else{
                         if(npair.getG()>functions.gVal(cpair.getG(), cpair.getD())){
                             npair.setG(functions.gVal(cpair.getG(),cpair.getD()));
@@ -204,8 +286,18 @@ public class Path {
                     }
                     if(!hopen.contains(npair)){
                         npair.setH(functions.hVal(px, py, zpair.getX(), zpair.getY()));
+                        npair.setG(functions.gVal(rpair.getG(), rpair.getD()));
+                        npair.setF(functions.fVal(npair.getG(), npair.getH()));
+                        npair.setP(rpair);
                         hopen.add(npair);
-                        Grid.world[py][px]='|';
+                        //Grid.world[py][px]='|';
+                    }
+                    else{
+                        if(npair.getG()>functions.gVal(rpair.getG(), rpair.getD())){
+                            npair.setG(functions.gVal(rpair.getG(),rpair.getD()));
+                            npair.setF(functions.fVal(npair.getG(), npair.getH()));
+                            npair.setP(rpair);
+                        }
                     }
                 }
             }
