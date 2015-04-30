@@ -1,8 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package astar;
 
 import java.util.ArrayList;
@@ -86,7 +82,6 @@ public class Path {
 	                tar=tar.getP();
 	//                Grid.world[tar.getY()][tar.getX()]='@';
 	            } 
-//	            /Grid.world[tar.getY()][tar.getX()]='@';
 	            Grid.world[zPair.getY()][zPair.getX()] = '-';
 	            zPair = tar;
 	        }
@@ -98,7 +93,8 @@ public class Path {
 	        	if(hclosed.contains(zPair)) {
 	        		break;
 	        	}
-	        	findHVals(rpair, zPair);
+	        	adjPairsH(rpair, zPair);
+	        	//adjPairs(rpair, zPair);
 	        }
 	        
 	        Grid.world[hPair.getY()][hPair.getX()]='H';
@@ -112,7 +108,6 @@ public class Path {
 	                tar=tar.getP();
 	//                Grid.world[tar.getY()][tar.getX()]='@';
 	            } 
-//	            /Grid.world[tar.getY()][tar.getX()]='@';
 	            Grid.world[hPair.getY()][hPair.getX()] = '+';
 	            hPair = tar;
 	        }
@@ -135,7 +130,7 @@ public class Path {
 	        //System.out.println(Grid.numObstacles + " d");
 	        for(int x = 0; x < Grid.numObstacles; x++) {
 	        	Pair p = Grid.obstacles[x];
-	        	Grid.world[p.getX()][p.getY()] = '#';
+	        	Grid.world[p.getY()][p.getY()] = '#';
 	        }
 	        //Grid.printW();
         }
@@ -259,7 +254,7 @@ public class Path {
         }
     }
     
-    public void findHVals(Pair rpair, Pair zpair) {
+    public void adjPairsH(Pair rpair, Pair zpair) {
     	for (int x=-1;x<2;x++) {
             for (int y=-1;y<2;y++) {
                 if ((x == 0) && (y == 0)) {

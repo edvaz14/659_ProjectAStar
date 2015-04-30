@@ -58,11 +58,10 @@ public class AStarTest {
              System.out.println(hX + " " + hY);
         }
         
-        Pair hPair = new Pair(hX,hY), cpair = zPair;
+        Pair hPair = new Pair(hX,hY);
         
-        assertTrue(zPair.getX() != hPair.getX());
-        assertTrue(zPair.getY() != hPair.getY());
-
+        assertTrue(zPair.getX() != hPair.getX() && zPair.getY() != hPair.getY());
+       
 	}
 
 }
